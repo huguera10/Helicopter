@@ -36,7 +36,7 @@ public class XBoxControl : MonoBehaviour
             Debug.Log("Bateu, seu juvena");
             cyclicVector.y = 0;
 
-            if (Input.GetButtonDown("A"))
+            if (Input.GetButtonDown(Constants.A))
             {
                 cyclicVector.y = jumpPower;
             }
@@ -45,7 +45,7 @@ public class XBoxControl : MonoBehaviour
 
     private void moveCyclic() {
         cyclicVector.x = Input.GetAxis(Constants.LeftJoystickX) * cyclicSpeed;
-        cyclicVector.z = Input.GetAxis("LeftJoystickY") * cyclicSpeed;
+        cyclicVector.z = Input.GetAxis(Constants.LeftJoystickX) * cyclicSpeed;
 
         cyclicVector.y -= gravity * Time.deltaTime;
 
@@ -54,14 +54,14 @@ public class XBoxControl : MonoBehaviour
 
     private void movePedals()
     {
-        pedalsVector.y = (Input.GetAxis("RT") - Input.GetAxis("LT")) * pedalsSpeed;
+        pedalsVector.y = (Input.GetAxis(Constants.RT) - Input.GetAxis(Constants.LT)) * pedalsSpeed;
 
         transform.Rotate(pedalsVector * Time.deltaTime);
     }
 
     private void moveCollective()
     {
-        collectiveVector.y = Input.GetAxis("DPadY") * collectiveSpeed;
+        collectiveVector.y = Input.GetAxis(Constants.DPadY) * collectiveSpeed;
 
         characterController.Move(transform.TransformDirection(collectiveVector) * Time.deltaTime);
     }
