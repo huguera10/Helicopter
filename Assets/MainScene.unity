@@ -935,7 +935,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1366735321}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: WindRose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -991,6 +991,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5e25aebdcb2fcb43b43559824a49f90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WindRose: {fileID: 1465697439}
 --- !u!143 &1459264172
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1084,7 +1085,7 @@ GameObject:
   - component: {fileID: 1465697440}
   - component: {fileID: 1465697439}
   m_Layer: 5
-  m_Name: WindRose
+  m_Name: WindRoseImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

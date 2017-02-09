@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class XBoxControl : MonoBehaviour
 {
@@ -12,9 +13,10 @@ public class XBoxControl : MonoBehaviour
     private float cyclicSpeed = 100;
     private float pedalsSpeed = 50;
     private float collectiveSpeed = 50;
-    private float jumpPower = 150;
+    private float jumpPower = 200;
     private float gravity = 150;
 
+    public RawImage WindRose;
 
     // Use this for initialization
     void Start()
@@ -33,19 +35,34 @@ public class XBoxControl : MonoBehaviour
 
         if (characterController.isGrounded)
         {
-            Debug.Log("Bateu, seu juvena");
             cyclicVector.y = 0;
 
             if (Input.GetButtonDown(Constants.A))
             {
                 cyclicVector.y = jumpPower;
             }
+
+            // ---------------------for keyboard---------------------- //
+            if (Input.GetKey(KeyCode.Space))
+            {
+                cyclicVector.y = jumpPower;
+            }
+            // ---------------------for keyboard---------------------- //
         }
     }
 
-    private void moveCyclic() {
+    private void moveCyclic()
+    {
         cyclicVector.x = Input.GetAxis(Constants.LeftJoystickX) * cyclicSpeed;
         cyclicVector.z = Input.GetAxis(Constants.LeftJoystickX) * cyclicSpeed;
+
+        // ---------------------for keyboard---------------------- //
+        if (Input.GetKey(KeyCode.W))
+            cyclicVector.z = (0.5f) * cyclicSpeed;
+
+        if (Input.GetKey(KeyCode.S))
+            cyclicVector.z = (-0.5f) * cyclicSpeed;
+        // ---------------------for keyboard---------------------- //
 
         cyclicVector.y -= gravity * Time.deltaTime;
 
@@ -56,6 +73,15 @@ public class XBoxControl : MonoBehaviour
     {
         pedalsVector.y = (Input.GetAxis(Constants.RT) - Input.GetAxis(Constants.LT)) * pedalsSpeed;
 
+        // ---------------------for keyboard---------------------- //
+        if (Input.GetKey(KeyCode.A))
+            pedalsVector.y = (0.5f) * pedalsSpeed;
+
+        if (Input.GetKey(KeyCode.D))
+            pedalsVector.y = (-0.5f) * pedalsSpeed;
+        // ---------------------for keyboard---------------------- //
+
+        WindRose.transform.Rotate(0, 0, pedalsVector.y * Time.deltaTime);
         transform.Rotate(pedalsVector * Time.deltaTime);
     }
 

@@ -19,8 +19,8 @@ public class HeaalthBar : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (Input.GetKeyDown(KeyCode.X))
-            DealDamage(10);
+        if (Input.GetKey(KeyCode.X))
+            DealDamage(2);
 	}
 
     void DealDamage(float damageValue)
