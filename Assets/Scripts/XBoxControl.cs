@@ -14,7 +14,7 @@ public class XBoxControl : MonoBehaviour
     private float pedalsSpeed = 50;
     private float collectiveSpeed = 50;
     private float jumpPower = 200;
-    private float gravity = 150;
+    private float gravity = 10;
 
     public RawImage WindRose;
 
@@ -64,7 +64,7 @@ public class XBoxControl : MonoBehaviour
             cyclicVector.z = (-0.5f) * cyclicSpeed;
         // ---------------------for keyboard---------------------- //
 
-        cyclicVector.y -= gravity * Time.deltaTime;
+        //cyclicVector.y -= gravity * Time.deltaTime;
 
         characterController.Move(transform.TransformDirection(cyclicVector) * Time.deltaTime);
     }
@@ -88,6 +88,16 @@ public class XBoxControl : MonoBehaviour
     private void moveCollective()
     {
         collectiveVector.y = Input.GetAxis(Constants.DPadY) * collectiveSpeed;
+
+        // ---------------------for keyboard---------------------- //
+        if (Input.GetKey(KeyCode.UpArrow))
+            collectiveVector.y = (5f) * collectiveSpeed;
+
+        if (Input.GetKey(KeyCode.DownArrow))
+            collectiveVector.y = (-5f) * collectiveSpeed;
+        // ---------------------for keyboard---------------------- //
+
+        collectiveVector.y -= gravity * 2;// * Time.deltaTime 10;
 
         characterController.Move(transform.TransformDirection(collectiveVector) * Time.deltaTime);
     }
