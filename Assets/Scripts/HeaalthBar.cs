@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 
 public class HeaalthBar : MonoBehaviour {
+    private float Damage = 1;
+
     public float CurrentHealth { get; set; }
     public float MaxHealth { get; set; }
 
@@ -20,7 +22,7 @@ public class HeaalthBar : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         if (Input.GetKey(KeyCode.X))
-            DealDamage(2);
+            DealDamage(Damage);
 	}
 
     void DealDamage(float damageValue)
@@ -40,7 +42,7 @@ public class HeaalthBar : MonoBehaviour {
 
     void Die()
     {
-        CurrentHealth = 0;
+        CurrentHealth = Damage;
         Debug.Log("Wasted");
     }
 }

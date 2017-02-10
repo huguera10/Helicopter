@@ -12,7 +12,7 @@ public class XBoxControl : MonoBehaviour
     private CharacterController characterController;
     private float cyclicSpeed = 100;
     private float pedalsSpeed = 50;
-    private float collectiveSpeed = 50;
+    private float collectiveSpeed =30;
     private float jumpPower = 200;
     private float gravity = 10;
 
@@ -56,13 +56,10 @@ public class XBoxControl : MonoBehaviour
         cyclicVector.x = Input.GetAxis(Constants.LeftJoystickX) * cyclicSpeed;
         cyclicVector.z = Input.GetAxis(Constants.LeftJoystickX) * cyclicSpeed;
 
-        // ---------------------for keyboard---------------------- //
-        if (Input.GetKey(KeyCode.W))
-            cyclicVector.z = (0.5f) * cyclicSpeed;
-
-        if (Input.GetKey(KeyCode.S))
-            cyclicVector.z = (-0.5f) * cyclicSpeed;
-        // ---------------------for keyboard---------------------- //
+        /* ---------------------for keyboard---------------------- */
+        cyclicVector.z = (Input.GetAxis("Vertical")) * cyclicSpeed;
+        cyclicVector.x = (Input.GetAxis("Horizontal")) * cyclicSpeed;
+        /* ---------------------for keyboard---------------------- */
 
         //cyclicVector.y -= gravity * Time.deltaTime;
 
@@ -73,13 +70,13 @@ public class XBoxControl : MonoBehaviour
     {
         pedalsVector.y = (Input.GetAxis(Constants.RT) - Input.GetAxis(Constants.LT)) * pedalsSpeed;
 
-        // ---------------------for keyboard---------------------- //
-        if (Input.GetKey(KeyCode.A))
-            pedalsVector.y = (0.5f) * pedalsSpeed;
-
-        if (Input.GetKey(KeyCode.D))
+        /* ---------------------for keyboard---------------------- */
+        if (Input.GetKey(KeyCode.J))
             pedalsVector.y = (-0.5f) * pedalsSpeed;
-        // ---------------------for keyboard---------------------- //
+
+        if (Input.GetKey(KeyCode.L))
+            pedalsVector.y = (0.5f) * pedalsSpeed;
+        /* ---------------------for keyboard---------------------- */
 
         WindRose.transform.Rotate(0, 0, pedalsVector.y * Time.deltaTime);
         transform.Rotate(pedalsVector * Time.deltaTime);
@@ -90,10 +87,10 @@ public class XBoxControl : MonoBehaviour
         collectiveVector.y = Input.GetAxis(Constants.DPadY) * collectiveSpeed;
 
         // ---------------------for keyboard---------------------- //
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.I))
             collectiveVector.y = (5f) * collectiveSpeed;
 
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.K))
             collectiveVector.y = (-5f) * collectiveSpeed;
         // ---------------------for keyboard---------------------- //
 
@@ -102,3 +99,4 @@ public class XBoxControl : MonoBehaviour
         characterController.Move(transform.TransformDirection(collectiveVector) * Time.deltaTime);
     }
 }
+
