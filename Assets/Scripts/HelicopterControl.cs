@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class XBoxControl : MonoBehaviour
+public class HelicopterControl : MonoBehaviour
 {
-
+    private bool IsTurnedOn;
     private Vector3 cyclicVector;
     private Vector3 pedalsVector;
     private Vector3 collectiveVector;
@@ -22,25 +23,27 @@ public class XBoxControl : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        this.IsTurnedOn = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        moveCyclic();
 
-        movePedals();
 
-        moveCollective();
+        if (this.IsTurnedOn)
+        {
+            moveCyclic();
 
+            movePedals();
+
+            moveCollective();
+        }
         if (characterController.isGrounded)
         {
-            cyclicVector.y = 0;
-
             if (Input.GetButtonDown(Constants.A))
-            {
-                cyclicVector.y = jumpPower;
-            }
+                this.IsTurnedOn = !this.IsTurnedOn;
+            cyclicVector.y = 0;
 
             // ---------------------for keyboard---------------------- //
             if (Input.GetKey(KeyCode.Space))
@@ -53,12 +56,14 @@ public class XBoxControl : MonoBehaviour
 
     private void moveCyclic()
     {
+       
+
         cyclicVector.x = Input.GetAxis(Constants.RightJoystickX) * cyclicSpeed;
-        cyclicVector.z = Input.GetAxis(Constants.RightJoystickX) * cyclicSpeed;
+        cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicSpeed;
 
         /* ---------------------for keyboard---------------------- */
-        cyclicVector.z = (Input.GetAxis("Vertical")) * cyclicSpeed;
-        cyclicVector.x = (Input.GetAxis("Horizontal")) * cyclicSpeed;
+        //cyclicVector.z = (Input.GetAxis("Vertical")) * cyclicSpeed;
+        //cyclicVector.x = (Input.GetAxis("Horizontal")) * cyclicSpeed;
         /* ---------------------for keyboard---------------------- */
 
         //cyclicVector.y -= gravity * Time.deltaTime;

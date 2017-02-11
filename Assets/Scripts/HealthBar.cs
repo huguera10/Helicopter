@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class HeaalthBar : MonoBehaviour {
-    private float Damage = 1;
+public class HealthBar : MonoBehaviour {
+    private float _damage = 1;
 
     public float CurrentHealth { get; set; }
     public float MaxHealth { get; set; }
 
-    public Slider HealthBar;
+    public Slider HealthBarSlider;
     public Text HealthBarCurrentValue;
 
 	// Use this for initialization
@@ -15,22 +15,22 @@ public class HeaalthBar : MonoBehaviour {
         MaxHealth = 100f;
         CurrentHealth = MaxHealth;
 
-        HealthBar.value = CalculateHealth();
-        HealthBarCurrentValue.text = CurrentHealth.ToString();
+        //this.HealthBarSlider.value = CalculateHealth();
+       // HealthBarCurrentValue.text = CurrentHealth.ToString();
     }
 
     // Update is called once per frame
     void Update () {
         if (Input.GetKey(KeyCode.X))
-            DealDamage(Damage);
+            DealDamage(_damage);
 	}
 
     void DealDamage(float damageValue)
     {
         CurrentHealth -= damageValue;
-        HealthBar.value = CalculateHealth();
-        HealthBarCurrentValue.text = CurrentHealth.ToString();
 
+        this.HealthBarCurrentValue.text = CurrentHealth.ToString();
+        this.HealthBarSlider.value = CurrentHealth;
         if (CurrentHealth <= 0)
             Die();
     }
@@ -42,7 +42,7 @@ public class HeaalthBar : MonoBehaviour {
 
     void Die()
     {
-        CurrentHealth = Damage;
+        CurrentHealth = _damage;
         Debug.Log("Wasted");
     }
 }
