@@ -53,8 +53,8 @@ public class XBoxControl : MonoBehaviour
 
     private void moveCyclic()
     {
-        cyclicVector.x = Input.GetAxis(Constants.LeftJoystickX) * cyclicSpeed;
-        cyclicVector.z = Input.GetAxis(Constants.LeftJoystickX) * cyclicSpeed;
+        cyclicVector.x = Input.GetAxis(Constants.RightJoystickX) * cyclicSpeed;
+        cyclicVector.z = Input.GetAxis(Constants.RightJoystickX) * cyclicSpeed;
 
         /* ---------------------for keyboard---------------------- */
         cyclicVector.z = (Input.GetAxis("Vertical")) * cyclicSpeed;
