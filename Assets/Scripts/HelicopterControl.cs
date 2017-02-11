@@ -15,21 +15,22 @@ public class HelicopterControl : MonoBehaviour
     private float pedalsSpeed = 50;
     private float collectiveSpeed =30;
     private float jumpPower = 200;
-    private float gravity = 10;
+    //private float gravity = 10;
 
     public RawImage WindRose;
 
     // Use this for initialization
     void Start()
     {
+        Physics.gravity = new Vector3(0, -5F, 0);
         characterController = GetComponent<CharacterController>();
-        this.IsTurnedOn = false;
+        this.IsTurnedOn = true;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-
 
         if (this.IsTurnedOn)
         {
@@ -59,6 +60,7 @@ public class HelicopterControl : MonoBehaviour
        
 
         cyclicVector.x = Input.GetAxis(Constants.RightJoystickX) * cyclicSpeed;
+        cyclicVector.y = Physics.gravity.y;
         cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicSpeed;
 
         /* ---------------------for keyboard---------------------- */
@@ -89,7 +91,16 @@ public class HelicopterControl : MonoBehaviour
 
     private void moveCollective()
     {
-        collectiveVector.y = Input.GetAxis(Constants.DPadY) * collectiveSpeed;
+        //collectiveVector.y = Input.GetAxis(Constants.DPadY) * collectiveSpeed;
+        if (Input.GetAxis(Constants.DPadY) > 0)
+        {
+            Physics.gravity += Vector3.up;
+        }
+        if (Input.GetAxis(Constants.DPadY) < 0)
+        {
+            Physics.gravity += Vector3.down;
+        }
+        Debug.Log(String.Format("DPadY value: {0}", Input.GetAxis(Constants.DPadY)) );
 
         // ---------------------for keyboard---------------------- //
         if (Input.GetKey(KeyCode.I))
@@ -99,9 +110,9 @@ public class HelicopterControl : MonoBehaviour
             collectiveVector.y = (-5f) * collectiveSpeed;
         // ---------------------for keyboard---------------------- //
 
-        collectiveVector.y -= gravity * 2;// * Time.deltaTime 10;
+        //collectiveVector.y -= gravity * 2;// * Time.deltaTime 10;
 
-        characterController.Move(transform.TransformDirection(collectiveVector) * Time.deltaTime);
+        //characterController.Move(transform.TransformDirection(collectiveVector) * Time.deltaTime);
     }
 }
 
