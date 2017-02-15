@@ -110,7 +110,7 @@ public class HelicopterControl : MonoBehaviour
                 Physics.gravity += -Physics.gravity * Time.deltaTime / 2;
             }
         }
-        Debug.Log(String.Format("DPadY value: {0}", Input.GetAxis(Constants.DPadY)));
+        //Debug.Log(String.Format("DPadY value: {0}", Input.GetAxis(Constants.DPadY)));
 
         // ---------------------for keyboard---------------------- //
         //if (Input.GetKey(KeyCode.I))
