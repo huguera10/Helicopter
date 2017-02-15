@@ -24,7 +24,7 @@ public class HelicopterControl : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Physics.gravity = new Vector3(0, -1F, 0);
+        //Physics.gravity = new Vector3(0, -5F, 0);
         characterController = GetComponent<CharacterController>();
         this.IsTurnedOn = true;
 
@@ -93,20 +93,21 @@ public class HelicopterControl : MonoBehaviour
 
     private void moveCollective()
     {
+        /* DEFINIR LIMITE DE ROTAÇÃO MÁXIMA E MÍNIMA DAS HÉLICES PARA QUE O HELICÓPTERO FIQUE NO AR */
         //collectiveVector.y = Input.GetAxis(Constants.DPadY) * collectiveSpeed;
         if (Input.GetAxis(Constants.DPadY) > 0)
         {
-            Physics.gravity += Vector3.up;
+            Physics.gravity += Vector3.up * 2;
         }
         else
         {
             if (Input.GetAxis(Constants.DPadY) < 0)
             {
-                Physics.gravity += Vector3.down;
+                Physics.gravity += Vector3.down * 2;
             }
             else
             {
-                //Physics.gravity += -Physics.gravity * Time.deltaTime;
+                Physics.gravity += -Physics.gravity * Time.deltaTime / 2;
             }
         }
         Debug.Log(String.Format("DPadY value: {0}", Input.GetAxis(Constants.DPadY)));
