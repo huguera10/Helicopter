@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FollowingCamera : MonoBehaviour {
 
     public Transform target;
-    public float MinDistance;
-    public float MinHight;
+    public float minDistance;
+    public float minHeight;
 
 	// Use this for initialization
 	void Start () {
@@ -15,6 +13,9 @@ public class FollowingCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Transform helicopterPos = target.transform;
-	}
+        Vector3 wantedPosition = target.TransformPoint(0, minHeight, minDistance);
+        transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * 2);
+
+        transform.LookAt(target, target.up);
+    }
 }
