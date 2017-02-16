@@ -30,38 +30,6 @@ public class HelicopterControl : MonoBehaviour
 
     }
 
-    float leftRightTurn;
-    float Roll;
-    float yValue;
-
-    void FixedUpdate()
-    {
-        cyclicVector.x = (Input.GetAxis("Horizontal")) * cyclicSpeed;
-
-        if (cyclicVector.x > 0)
-        {
-            leftRightTurn  += Time.deltaTime * 1.5f;
-        }
-        else {
-            if (cyclicVector.x < 0)
-            {
-                leftRightTurn -= Time.deltaTime * 1.5f;
-            } else
-            {
-                leftRightTurn = Mathf.SmoothDamp(leftRightTurn, 0, ref yValue, 0.1f);
-            }
-        }
-
-        leftRightTurn = Mathf.Clamp(leftRightTurn, -1, 1);
-
-        Roll += leftRightTurn * Time.fixedDeltaTime;
-        Roll = Mathf.Clamp(Roll, -1.2f, 1.2f);
-
-        Debug.Log(Roll);
-
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, Roll*10), Time.fixedDeltaTime * 1.5f);
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -96,8 +64,8 @@ public class HelicopterControl : MonoBehaviour
         cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicSpeed;
 
         /* ---------------------for keyboard---------------------- */
-        //cyclicVector.z = -(Input.GetAxis("Vertical")) * cyclicSpeed;
-        //cyclicVector.x = -(Input.GetAxis("Horizontal")) * cyclicSpeed;
+        //cyclicVector.z = (Input.GetAxis("Vertical")) * cyclicSpeed;
+        //cyclicVector.x = (Input.GetAxis("Horizontal")) * cyclicSpeed;
         /* ---------------------for keyboard---------------------- */
 
         //cyclicVector.y -= gravity * Time.deltaTime;
@@ -150,19 +118,19 @@ public class HelicopterControl : MonoBehaviour
         //if (Input.GetKey(KeyCode.K))
         //    collectiveVector.y = (-5f) * collectiveSpeed;
 
-        if (Input.GetKey(KeyCode.I))
-            Physics.gravity += Vector3.up * 2;
-        else
-        {
-            if (Input.GetKey(KeyCode.K))
-            {
-                Physics.gravity += Vector3.down * 2;
-            }
-            else
-            {
-                Physics.gravity += -Physics.gravity * Time.deltaTime /2;
-            }
-        }
+        //if (Input.GetKey(KeyCode.I))
+        //    Physics.gravity += Vector3.up;
+        //else
+        //{
+        //    if (Input.GetKey(KeyCode.K))
+        //    {
+        //        Physics.gravity += Vector3.down;
+        //    }
+        //    else
+        //    {
+        //        Physics.gravity += -Physics.gravity * Time.deltaTime;
+        //    }
+        //}
         // ---------------------for keyboard---------------------- //
 
         //collectiveVector.y -= gravity * 2;// * Time.deltaTime 10;
