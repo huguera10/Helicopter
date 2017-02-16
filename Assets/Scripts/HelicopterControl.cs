@@ -10,7 +10,7 @@ public class HelicopterControl : MonoBehaviour
     private Vector3 cyclicVector;
     private Vector3 pedalsVector;
     private Vector3 collectiveVector;
-    private CharacterController characterController;
+    //private CharacterController characterController;
     private float cyclicSpeed = 50;
     private float pedalsSpeed = 50;
     private float collectiveSpeed = 30;
@@ -25,7 +25,7 @@ public class HelicopterControl : MonoBehaviour
     void Start()
     {
         //Physics.gravity = new Vector3(0, -5F, 0);
-        characterController = GetComponent<CharacterController>();
+        //characterController = GetComponent<CharacterController>();
         this.IsTurnedOn = true;
 
     }
@@ -42,24 +42,23 @@ public class HelicopterControl : MonoBehaviour
 
             moveCollective();
         }
-        if (characterController.isGrounded)
-        {
-            if (Input.GetButtonDown(Constants.A))
-                this.IsTurnedOn = !this.IsTurnedOn;
-            cyclicVector.y = 0;
+        //if (characterController.isGrounded)
+        //{
+        //    if (Input.GetButtonDown(Constants.A))
+        //        this.IsTurnedOn = !this.IsTurnedOn;
+        //    cyclicVector.y = 0;
 
-            // ---------------------for keyboard---------------------- //
-            if (Input.GetKey(KeyCode.Space))
-            {
-                cyclicVector.y = jumpPower;
-            }
-            // ---------------------for keyboard---------------------- //
-        }
+        //    // ---------------------for keyboard---------------------- //
+        //    if (Input.GetKey(KeyCode.Space))
+        //    {
+        //        cyclicVector.y = jumpPower;
+        //    }
+        //    // ---------------------for keyboard---------------------- //
+        //}
     }
 
     private void moveCyclic()
     {
-
 
         cyclicVector.x = Input.GetAxis(Constants.RightJoystickX) * cyclicSpeed;
         cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicSpeed;
