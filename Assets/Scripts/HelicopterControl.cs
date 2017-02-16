@@ -92,7 +92,6 @@ public class HelicopterControl : MonoBehaviour
     private void moveCyclic()
     {
 
-
         cyclicVector.x = Input.GetAxis(Constants.RightJoystickX) * cyclicSpeed;
         cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicSpeed;
 
