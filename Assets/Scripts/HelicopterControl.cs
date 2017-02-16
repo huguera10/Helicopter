@@ -10,7 +10,7 @@ public class HelicopterControl : MonoBehaviour
     private Vector3 cyclicVector;
     private Vector3 pedalsVector;
     private Vector3 collectiveVector;
-    private CharacterController characterController;
+    //private CharacterController characterController;
     private float cyclicSpeed = 50;
     private float pedalsSpeed = 50;
     private float collectiveSpeed = 30;
@@ -25,9 +25,41 @@ public class HelicopterControl : MonoBehaviour
     void Start()
     {
         //Physics.gravity = new Vector3(0, -5F, 0);
-        characterController = GetComponent<CharacterController>();
+        //characterController = GetComponent<CharacterController>();
         this.IsTurnedOn = true;
 
+    }
+
+    float leftRightTurn;
+    float Roll;
+    float yValue;
+
+    void FixedUpdate()
+    {
+        cyclicVector.x = (Input.GetAxis("Horizontal")) * cyclicSpeed;
+
+        if (cyclicVector.x > 0)
+        {
+            leftRightTurn  += Time.deltaTime * 1.5f;
+        }
+        else {
+            if (cyclicVector.x < 0)
+            {
+                leftRightTurn -= Time.deltaTime * 1.5f;
+            } else
+            {
+                leftRightTurn = Mathf.SmoothDamp(leftRightTurn, 0, ref yValue, 0.1f);
+            }
+        }
+
+        leftRightTurn = Mathf.Clamp(leftRightTurn, -1, 1);
+
+        Roll += leftRightTurn * Time.fixedDeltaTime;
+        Roll = Mathf.Clamp(Roll, -1.2f, 1.2f);
+
+        Debug.Log(Roll);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, Roll*10), Time.fixedDeltaTime * 1.5f);
     }
 
     // Update is called once per frame
@@ -42,19 +74,19 @@ public class HelicopterControl : MonoBehaviour
 
             moveCollective();
         }
-        if (characterController.isGrounded)
-        {
-            if (Input.GetButtonDown(Constants.A))
-                this.IsTurnedOn = !this.IsTurnedOn;
-            cyclicVector.y = 0;
+        //if (characterController.isGrounded)
+        //{
+        //    if (Input.GetButtonDown(Constants.A))
+        //        this.IsTurnedOn = !this.IsTurnedOn;
+        //    cyclicVector.y = 0;
 
-            // ---------------------for keyboard---------------------- //
-            if (Input.GetKey(KeyCode.Space))
-            {
-                cyclicVector.y = jumpPower;
-            }
-            // ---------------------for keyboard---------------------- //
-        }
+        //    // ---------------------for keyboard---------------------- //
+        //    if (Input.GetKey(KeyCode.Space))
+        //    {
+        //        cyclicVector.y = jumpPower;
+        //    }
+        //    // ---------------------for keyboard---------------------- //
+        //}
     }
 
     private void moveCyclic()
@@ -65,8 +97,8 @@ public class HelicopterControl : MonoBehaviour
         cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicSpeed;
 
         /* ---------------------for keyboard---------------------- */
-        //cyclicVector.z = (Input.GetAxis("Vertical")) * cyclicSpeed;
-        //cyclicVector.x = (Input.GetAxis("Horizontal")) * cyclicSpeed;
+        //cyclicVector.z = -(Input.GetAxis("Vertical")) * cyclicSpeed;
+        //cyclicVector.x = -(Input.GetAxis("Horizontal")) * cyclicSpeed;
         /* ---------------------for keyboard---------------------- */
 
         //cyclicVector.y -= gravity * Time.deltaTime;
@@ -119,19 +151,19 @@ public class HelicopterControl : MonoBehaviour
         //if (Input.GetKey(KeyCode.K))
         //    collectiveVector.y = (-5f) * collectiveSpeed;
 
-        //if (Input.GetKey(KeyCode.I))
-        //    Physics.gravity += Vector3.up;
-        //else
-        //{
-        //    if (Input.GetKey(KeyCode.K))
-        //    {
-        //        Physics.gravity += Vector3.down;
-        //    }
-        //    else
-        //    {
-        //        Physics.gravity += -Physics.gravity * Time.deltaTime;
-        //    }
-        //}
+        if (Input.GetKey(KeyCode.I))
+            Physics.gravity += Vector3.up * 2;
+        else
+        {
+            if (Input.GetKey(KeyCode.K))
+            {
+                Physics.gravity += Vector3.down * 2;
+            }
+            else
+            {
+                Physics.gravity += -Physics.gravity * Time.deltaTime /2;
+            }
+        }
         // ---------------------for keyboard---------------------- //
 
         //collectiveVector.y -= gravity * 2;// * Time.deltaTime 10;
