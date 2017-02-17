@@ -10,14 +10,18 @@ public class HelicopterControl : MonoBehaviour
     private Vector3 cyclicVector;
     private Vector3 pedalsVector;
     private Vector3 collectiveVector;
+    private float cyclicX;
+    private float cyclicZ;
+    private float pedalsY;
     //private CharacterController characterController;
-    private float cyclicSpeed = 50;
-    private float pedalsSpeed = 50;
-    private float collectiveSpeed = 30;
-    private float jumpPower = 200;
+    private float cyclicMultiplier = 50;
+    private float pedalsMultiplier = 50;
+    private float collectiveMultiplier = 30;
+    //private float jumpPower = 200;
     //private float gravity = 10;
 
     private float upDown = 0.0f;
+    private float UpDownVelocity;
 
     public RawImage WindRose;
 
@@ -27,7 +31,14 @@ public class HelicopterControl : MonoBehaviour
         //Physics.gravity = new Vector3(0, -5F, 0);
         //characterController = GetComponent<CharacterController>();
         this.IsTurnedOn = true;
+    }
 
+    float leftRightTurn;
+    float Roll;
+    float yValue;
+
+    void FixedUpdate()
+    {
     }
 
     // Update is called once per frame
@@ -36,11 +47,14 @@ public class HelicopterControl : MonoBehaviour
 
         if (this.IsTurnedOn)
         {
-            moveCyclic();
+            Vector2 cyclic = moveCyclic();
 
-            movePedals();
+            float pedals = movePedals();
 
             moveCollective();
+
+            Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.x, pedals, cyclic.y), Time.fixedDeltaTime * 5000);
         }
         //if (characterController.isGrounded)
         //{
@@ -57,37 +71,51 @@ public class HelicopterControl : MonoBehaviour
         //}
     }
 
-    private void moveCyclic()
+    private Vector2 moveCyclic()
     {
 
-        cyclicVector.x = Input.GetAxis(Constants.RightJoystickX) * cyclicSpeed;
-        cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicSpeed;
+        cyclicVector.x = Input.GetAxis(Constants.RightJoystickX) * cyclicMultiplier;
+        cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicMultiplier;
 
         /* ---------------------for keyboard---------------------- */
-        //cyclicVector.z = (Input.GetAxis("Vertical")) * cyclicSpeed;
-        //cyclicVector.x = (Input.GetAxis("Horizontal")) * cyclicSpeed;
+        cyclicVector.x = (Input.GetAxis("Vertical")) * cyclicMultiplier;
+        cyclicVector.z = -(Input.GetAxis("Horizontal")) * cyclicMultiplier;
         /* ---------------------for keyboard---------------------- */
 
+        //cyclicVector.x = Mathf.Clamp(cyclicVector.x, -1, 1);
+        //cyclicVector.z = Mathf.Clamp(cyclicVector.z, -1, 1);
+
+        cyclicX += cyclicVector.x * Time.fixedDeltaTime;
+        cyclicX = Mathf.Clamp(cyclicX, -30f, 30f);
+
+        cyclicZ += cyclicVector.z * Time.fixedDeltaTime;
+        cyclicZ = Mathf.Clamp(cyclicZ, -30f, 30f);
         //cyclicVector.y -= gravity * Time.deltaTime;
 
         //characterController.Move(transform.TransformDirection(cyclicVector) * Time.deltaTime);
-        transform.Translate(cyclicVector * Time.deltaTime);
+        //transform.Translate(cyclicVector * Time.deltaTime);
+        return new Vector2(cyclicX, cyclicZ);
     }
 
-    private void movePedals()
+    private float movePedals()
     {
-        pedalsVector.y = (Input.GetAxis(Constants.RT) - Input.GetAxis(Constants.LT)) * pedalsSpeed;
+        pedalsVector.y = (Input.GetAxis(Constants.RT) - Input.GetAxis(Constants.LT)) * pedalsMultiplier;
 
         /* ---------------------for keyboard---------------------- */
         if (Input.GetKey(KeyCode.J))
-            pedalsVector.y = (-0.5f) * pedalsSpeed;
+            pedalsVector.y = (-0.5f) * pedalsMultiplier;
 
         if (Input.GetKey(KeyCode.L))
-            pedalsVector.y = (0.5f) * pedalsSpeed;
+            pedalsVector.y = (0.5f) * pedalsMultiplier;
         /* ---------------------for keyboard---------------------- */
 
-        WindRose.transform.Rotate(0, 0, pedalsVector.y * Time.deltaTime);
-        transform.Rotate(pedalsVector * Time.deltaTime);
+        //pedalsVector.y = Mathf.Clamp(pedalsVector.y, -1, 1);
+
+        pedalsY += pedalsVector.y * Time.deltaTime;
+
+        WindRose.transform.rotation = Quaternion.Slerp(WindRose.transform.rotation, Quaternion.Euler(0, 0, pedalsY), Time.deltaTime);
+        //transform.Rotate(pedalsVector * Time.deltaTime);
+        return pedalsY;
     }
 
     private void moveCollective()
@@ -137,5 +165,6 @@ public class HelicopterControl : MonoBehaviour
 
         //characterController.Move(transform.TransformDirection(collectiveVector) * Time.deltaTime);
     }
+
 }
 
