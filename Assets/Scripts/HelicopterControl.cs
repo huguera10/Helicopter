@@ -80,8 +80,8 @@ public class HelicopterControl : MonoBehaviour
             //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
             GetComponent<Rigidbody>().MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000));
 
-            GetComponent<Rigidbody>().AddForce(0,1,(-1 * 100) * Input.GetAxis(Constants.RightJoystickY), ForceMode.Acceleration);
-            GetComponent<Rigidbody>().AddForce((-1*100) * Input.GetAxis(Constants.RightJoystickX), 0, 0, ForceMode.Acceleration);
+            GetComponent<Rigidbody>().AddForce(0, 1, (-1 * 100) * Input.GetAxis(Constants.RightJoystickY), ForceMode.Acceleration);
+            GetComponent<Rigidbody>().AddForce((-1 * 100) * Input.GetAxis(Constants.RightJoystickX), 0, 0, ForceMode.Acceleration);
 
             moveCyclic();
 
@@ -89,13 +89,13 @@ public class HelicopterControl : MonoBehaviour
 
             moveCollective();
 
-<<<<<<< HEAD
+
             Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.x, pedals, cyclic.y), Time.fixedDeltaTime);
-=======
+
             //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
             //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000);
->>>>>>> refs/remotes/origin/master
+
         }
         //if (characterController.isGrounded)
         //{
@@ -111,6 +111,7 @@ public class HelicopterControl : MonoBehaviour
         //    // ---------------------for keyboard---------------------- //
         //}
     }
+
 
     public Vector2 moveCyclic()
     {
@@ -202,4 +203,3 @@ public class HelicopterControl : MonoBehaviour
     }
 
 }
-
