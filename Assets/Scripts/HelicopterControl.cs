@@ -78,10 +78,10 @@ public class HelicopterControl : MonoBehaviour
             Vector2 cyclic = moveCyclic();
             float pedals = movePedals();
             //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
-            GetComponent<Rigidbody>().MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000));
+            //GetComponent<Rigidbody>().MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000));
 
-            GetComponent<Rigidbody>().AddForce(0, 1, (-1 * 100) * Input.GetAxis(Constants.RightJoystickY), ForceMode.Acceleration);
-            GetComponent<Rigidbody>().AddForce((-1 * 100) * Input.GetAxis(Constants.RightJoystickX), 0, 0, ForceMode.Acceleration);
+            GetComponent<Rigidbody>().AddForce(0, 1, -cyclic.x, ForceMode.Acceleration);
+            GetComponent<Rigidbody>().AddForce(-cyclic.y, 0, 0, ForceMode.Acceleration);
 
             moveCyclic();
 
@@ -90,11 +90,8 @@ public class HelicopterControl : MonoBehaviour
             moveCollective();
 
 
-            Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.x, pedals, cyclic.y), Time.fixedDeltaTime);
-
             //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
-            //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000);
 
         }
         //if (characterController.isGrounded)
@@ -119,8 +116,8 @@ public class HelicopterControl : MonoBehaviour
         cyclicVector.z = -Input.GetAxis(Constants.RightJoystickY) * cyclicMultiplier;
 
         ///* ---------------------for keyboard---------------------- */
-        //cyclicVector.x = (Input.GetAxis("Vertical")) * cyclicMultiplier;
-        //cyclicVector.z = -(Input.GetAxis("Horizontal")) * cyclicMultiplier;
+        cyclicVector.z = (Input.GetAxis("Vertical")) * cyclicMultiplier;
+        cyclicVector.x = -(Input.GetAxis("Horizontal")) * cyclicMultiplier;
         ///* ---------------------for keyboard---------------------- */
 
         //cyclicVector.x = Mathf.Clamp(cyclicVector.x, -1, 1);
