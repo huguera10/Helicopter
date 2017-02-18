@@ -18,6 +18,8 @@ public class HelicopterControl : MonoBehaviour
     private float pedalsMultiplier = 50;
     private float collectiveMultiplier = 30;
     //private float jumpPower = 200;
+    float power = 0, acceleration = 1;
+    int aux = 0;
     //private float gravity = 10;
 
     private float upDown = 0.0f;
@@ -37,24 +39,58 @@ public class HelicopterControl : MonoBehaviour
     float Roll;
     float yValue;
 
-    void FixedUpdate()
-    {
-    }
+    //void FixedUpdate()
+    //{
+    //}
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
 
         if (this.IsTurnedOn)
         {
-            Vector2 cyclic = moveCyclic();
 
+            //Debug.Log(Input.GetAxis(Constants.RightJoystickY));
+            //if (Input.GetAxis(Constants.RightJoystickY) > 0)
+            //{
+            //    aux = 1;
+            //    power = power - (acceleration);
+            //    GetComponent<Rigidbody>().AddForce((transform.forward * 5 * power * (Input.GetAxis(Constants.RightJoystickY) * -1)), ForceMode.Acceleration);
+
+
+            //}
+            //else if (Input.GetAxis(Constants.RightJoystickY) < 0)
+            //{
+            //    aux = -1;
+            //    power = power + (acceleration);
+            //    GetComponent<Rigidbody>().AddForce((transform.forward * 5 * power * (Input.GetAxis(Constants.RightJoystickY) * 1)), ForceMode.Acceleration);
+            //}else
+            //{
+            //    if (power != 0)
+            //    {
+            //        power = power + (acceleration) * aux; 
+            //    }
+            //    GetComponent<Rigidbody>().AddForce((transform.forward * 5 * power), ForceMode.Acceleration);
+            //}
+
+
+
+            Vector2 cyclic = moveCyclic();
             float pedals = movePedals();
+            //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
+            GetComponent<Rigidbody>().MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000));
+
+            GetComponent<Rigidbody>().AddForce(0,1,(-1 * 100) * Input.GetAxis(Constants.RightJoystickY), ForceMode.Acceleration);
+            GetComponent<Rigidbody>().AddForce((-1*100) * Input.GetAxis(Constants.RightJoystickX), 0, 0, ForceMode.Acceleration);
+
+            moveCyclic();
+
+            movePedals();
 
             moveCollective();
 
-            Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.x, pedals, cyclic.y), Time.fixedDeltaTime * 5000);
+            //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
+            //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000);
         }
         //if (characterController.isGrounded)
         //{
@@ -71,16 +107,15 @@ public class HelicopterControl : MonoBehaviour
         //}
     }
 
-    private Vector2 moveCyclic()
+    public Vector2 moveCyclic()
     {
-
         cyclicVector.x = Input.GetAxis(Constants.RightJoystickX) * cyclicMultiplier;
-        cyclicVector.z = Input.GetAxis(Constants.RightJoystickY) * cyclicMultiplier;
+        cyclicVector.z = -Input.GetAxis(Constants.RightJoystickY) * cyclicMultiplier;
 
-        /* ---------------------for keyboard---------------------- */
-        cyclicVector.x = (Input.GetAxis("Vertical")) * cyclicMultiplier;
-        cyclicVector.z = -(Input.GetAxis("Horizontal")) * cyclicMultiplier;
-        /* ---------------------for keyboard---------------------- */
+        ///* ---------------------for keyboard---------------------- */
+        //cyclicVector.x = (Input.GetAxis("Vertical")) * cyclicMultiplier;
+        //cyclicVector.z = -(Input.GetAxis("Horizontal")) * cyclicMultiplier;
+        ///* ---------------------for keyboard---------------------- */
 
         //cyclicVector.x = Mathf.Clamp(cyclicVector.x, -1, 1);
         //cyclicVector.z = Mathf.Clamp(cyclicVector.z, -1, 1);
@@ -93,11 +128,11 @@ public class HelicopterControl : MonoBehaviour
         //cyclicVector.y -= gravity * Time.deltaTime;
 
         //characterController.Move(transform.TransformDirection(cyclicVector) * Time.deltaTime);
-        //transform.Translate(cyclicVector * Time.deltaTime);
+        //transform.Translate(transform.TransformVector(cyclicVector * Time.deltaTime));
         return new Vector2(cyclicX, cyclicZ);
     }
 
-    private float movePedals()
+    public float movePedals()
     {
         pedalsVector.y = (Input.GetAxis(Constants.RT) - Input.GetAxis(Constants.LT)) * pedalsMultiplier;
 
@@ -114,11 +149,12 @@ public class HelicopterControl : MonoBehaviour
         pedalsY += pedalsVector.y * Time.deltaTime;
 
         WindRose.transform.rotation = Quaternion.Slerp(WindRose.transform.rotation, Quaternion.Euler(0, 0, pedalsY), Time.deltaTime);
-        //transform.Rotate(pedalsVector * Time.deltaTime);
+        //GetComponent<Rigidbody>().MoveRotation(Quaternion.Euler(pedalsVector * Time.deltaTime));
+        transform.Rotate(pedalsVector * Time.deltaTime);
         return pedalsY;
     }
 
-    private void moveCollective()
+    public void moveCollective()
     {
         /* DEFINIR LIMITE DE ROTAÇÃO MÁXIMA E MÍNIMA DAS HÉLICES PARA QUE O HELICÓPTERO FIQUE NO AR */
         //collectiveVector.y = Input.GetAxis(Constants.DPadY) * collectiveSpeed;

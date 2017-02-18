@@ -14,7 +14,7 @@ public class FollowingCamera : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Vector3 wantedPosition = target.TransformPoint(0, minHeight, minDistance);
         transform.position = Vector3.Lerp(transform.position, wantedPosition, Time.deltaTime * 2);
