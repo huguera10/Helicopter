@@ -16,7 +16,7 @@ public class HelicopterControl : MonoBehaviour
     //private CharacterController characterController;
     private float cyclicMultiplier = 50;
     private float pedalsMultiplier = 50;
-    private float collectiveMultiplier = 30;
+    private float collectiveMultiplier = 50;
     //private float jumpPower = 200;
     //private float gravity = 10;
 
@@ -54,7 +54,7 @@ public class HelicopterControl : MonoBehaviour
             moveCollective();
 
             Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.x, pedals, cyclic.y), Time.fixedDeltaTime * 5000);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.x, pedals, cyclic.y), Time.fixedDeltaTime);
         }
         //if (characterController.isGrounded)
         //{
@@ -134,31 +134,25 @@ public class HelicopterControl : MonoBehaviour
             }
             else
             {
-                Physics.gravity += -Physics.gravity * Time.deltaTime / 2;
+                //Physics.gravity += -Physics.gravity * Time.deltaTime / 2;
             }
         }
         //Debug.Log(String.Format("DPadY value: {0}", Input.GetAxis(Constants.DPadY)));
 
         // ---------------------for keyboard---------------------- //
-        //if (Input.GetKey(KeyCode.I))
-        //    collectiveVector.y = (5f) * collectiveSpeed;
-
-        //if (Input.GetKey(KeyCode.K))
-        //    collectiveVector.y = (-5f) * collectiveSpeed;
-
-        //if (Input.GetKey(KeyCode.I))
-        //    Physics.gravity += Vector3.up;
-        //else
-        //{
-        //    if (Input.GetKey(KeyCode.K))
-        //    {
-        //        Physics.gravity += Vector3.down;
-        //    }
-        //    else
-        //    {
-        //        Physics.gravity += -Physics.gravity * Time.deltaTime;
-        //    }
-        //}
+        if (Input.GetKey(KeyCode.I))
+            Physics.gravity += Vector3.up;
+        else
+        {
+            if (Input.GetKey(KeyCode.K))
+            {
+                Physics.gravity += Vector3.down;
+            }
+            else
+            {
+                //Physics.gravity += -Physics.gravity * Time.deltaTime;
+            }
+        }
         // ---------------------for keyboard---------------------- //
 
         //collectiveVector.y -= gravity * 2;// * Time.deltaTime 10;
