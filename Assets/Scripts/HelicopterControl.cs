@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class HelicopterControl : MonoBehaviour
 {
+    private const float gravity = 9.80665f;
+
     private bool IsTurnedOn;
     private Vector3 cyclicVector;
     private Vector3 pedalsVector;
@@ -15,9 +17,12 @@ public class HelicopterControl : MonoBehaviour
     private float pedalsY;
     private float cyclicMultiplier = 50;
     private float pedalsMultiplier = 50;
-    private float collectiveMultiplier = 30;
-    //float power = 0, acceleration = 1;
-    int aux = 0;
+    private float collectiveMultiplier = 50;
+    private float maxAltitude = 530;
+    private float acceleration;
+    private float maxAcceleration = 2;
+    private bool aux = true;
+
 
     public RawImage WindRose;
 
@@ -27,6 +32,23 @@ public class HelicopterControl : MonoBehaviour
         this.IsTurnedOn = true;
     }
 
+    private void ApplyCollective(Vector2 cyclic, float pedals, float movementX, float movementY)
+    {
+        var movement = (movementX  != 0 || movementY != 0) ? true : false;
+        int acelerationMultiplier = 0;
+        acceleration = Mathf.Lerp(acceleration, movement ? maxAcceleration : 0, Time.deltaTime);
+        //Debug.Log(acceleration);
+       transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(movement ? -cyclic.y: cyclic.y, pedals, movement ? -cyclic.x: cyclic.x), Time.fixedDeltaTime * 5000);
+
+        if (movementX != 0 && movementY != 0)
+        {
+            acelerationMultiplier = 36;
+        }
+        else
+            acelerationMultiplier = 18;
+        GetComponent<Rigidbody>().AddRelativeForce(cyclicX * acceleration, movement ? acelerationMultiplier * acceleration : gravity, -cyclicZ * acceleration, ForceMode.Acceleration);
+
+    }
 
     // Update is called once per frame
     void FixedUpdate()
@@ -34,50 +56,26 @@ public class HelicopterControl : MonoBehaviour
 
         if (this.IsTurnedOn)
         {
-
-            //Debug.Log(Input.GetAxis(Constants.RightJoystickY));
-            //if (Input.GetAxis(Constants.RightJoystickY) > 0)
-            //{
-            //    aux = 1;
-            //    power = power - (acceleration);
-            //    GetComponent<Rigidbody>().AddForce((transform.forward * 5 * power * (Input.GetAxis(Constants.RightJoystickY) * -1)), ForceMode.Acceleration);
-
-
-            //}
-            //else if (Input.GetAxis(Constants.RightJoystickY) < 0)
-            //{
-            //    aux = -1;
-            //    power = power + (acceleration);
-            //    GetComponent<Rigidbody>().AddForce((transform.forward * 5 * power * (Input.GetAxis(Constants.RightJoystickY) * 1)), ForceMode.Acceleration);
-            //}else
-            //{
-            //    if (power != 0)
-            //    {
-            //        power = power + (acceleration) * aux; 
-            //    }
-            //    GetComponent<Rigidbody>().AddForce((transform.forward * 5 * power), ForceMode.Acceleration);
-            //}
-
-
+            moveCollective();
 
             Vector2 cyclic = moveCyclic();
             float pedals = movePedals();
+            var movementX = Input.GetAxis(Constants.RightJoystickX);
+            var movementY = Input.GetAxis(Constants.RightJoystickY);
+
+
+             ApplyCollective(cyclic, pedals, movementX, movementY);
             //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
-            //GetComponent<Rigidbody>().MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000));
-
-            GetComponent<Rigidbody>().AddRelativeForce(0,20,-cyclicZ * 5, ForceMode.Acceleration);
-            GetComponent<Rigidbody>().AddRelativeForce(-cyclicX * 5 , 20, 0, ForceMode.Acceleration);
-
-            moveCyclic();
-
-            movePedals();
-
-            moveCollective();
-
-            //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-cyclic.y, pedals, cyclic.x), Time.fixedDeltaTime * 5000);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-cyclic.y, pedals, -cyclic.x), Time.fixedDeltaTime * 5000);
         }
 
+        getVelocity();
+
+    }
+
+    public void getVelocity()
+    {
+        GameObject.Find("Canvas/Speedometer/Number").GetComponent<Text>().text = ((int)(GetComponent<Rigidbody>().velocity.magnitude*5)).ToString();
     }
 
     public Vector2 moveCyclic()
@@ -90,16 +88,38 @@ public class HelicopterControl : MonoBehaviour
         //cyclicVector.z = -(Input.GetAxis("Horizontal")) * cyclicMultiplier;
         ///* ---------------------for keyboard---------------------- */
 
+        if (Input.GetAxis(Constants.RightJoystickY) != 0)
+        {
+            cyclicZ += cyclicVector.z * Time.fixedDeltaTime;
+            cyclicZ = Mathf.Clamp(cyclicZ, -30f, 30f);
+        }
+        else
+        {
+            cyclicZ = Mathf.Lerp(cyclicZ, 0, Time.fixedDeltaTime);
+        }
 
-        cyclicX += cyclicVector.x * Time.fixedDeltaTime;
-        cyclicX = Mathf.Clamp(cyclicX, -30f, 30f);
+        if (Input.GetAxis(Constants.RightJoystickX) != 0)
+        {
+            cyclicX += cyclicVector.x * Time.fixedDeltaTime;
+            cyclicX = Mathf.Clamp(cyclicX, -30f, 30f);
+        }
+        else
+        {
+            cyclicX = Mathf.Lerp(cyclicX, 0, Time.fixedDeltaTime);
+        }
 
-        cyclicZ += cyclicVector.z * Time.fixedDeltaTime;
-        cyclicZ = Mathf.Clamp(cyclicZ, -30f, 30f);
+        //else
+        //{
+        //    cyclicX += -4 * Time.fixedDeltaTime;
+        //    cyclicX = Mathf.Clamp(cyclicX, -30f, 30f);
+
+        //    cyclicZ += -4 * Time.fixedDeltaTime;
+        //    cyclicZ = Mathf.Clamp(cyclicZ, -30f, 30f);
+        //}
 
         return new Vector2(cyclicX, cyclicZ);
     }
-
+    
     public float movePedals()
     {
         pedalsVector.y = (Input.GetAxis(Constants.RT) - Input.GetAxis(Constants.LT)) * pedalsMultiplier;
@@ -115,47 +135,41 @@ public class HelicopterControl : MonoBehaviour
 
         pedalsY += pedalsVector.y * Time.deltaTime;
 
-        WindRose.transform.rotation = Quaternion.Slerp(WindRose.transform.rotation, Quaternion.Euler(0, 0, pedalsY), Time.deltaTime);
+        GameObject.Find("Canvas/WindRose/WindRoseImage").transform.rotation = Quaternion.Slerp(WindRose.transform.rotation, Quaternion.Euler(0, 0, pedalsY), Time.deltaTime);
+         //WindRose.transform.rotation = Quaternion.Slerp(WindRose.transform.rotation, Quaternion.Euler(0, 0, pedalsY), Time.deltaTime);
         return pedalsY;
     }
 
     public void moveCollective()
     {
         /* DEFINIR LIMITE DE ROTAÇÃO MÁXIMA E MÍNIMA DAS HÉLICES PARA QUE O HELICÓPTERO FIQUE NO AR */
-        if (Input.GetAxis(Constants.DPadY) > 0)
+    
+        float currentAltitude = transform.position.y;
+
+        if (currentAltitude <= maxAltitude)
         {
-            Physics.gravity += Vector3.up * 2;
+            GetComponent<Rigidbody>().AddRelativeForce(0, Input.GetAxis(Constants.DPadY) * collectiveMultiplier, 0, ForceMode.Acceleration);
         }
         else
         {
-            if (Input.GetAxis(Constants.DPadY) < 0)
-            {
-                Physics.gravity += Vector3.down * 2;
-            }
-            else
-            {
-                Physics.gravity += -Physics.gravity * Time.deltaTime / 2;
-            }
+            GetComponent<Rigidbody>().AddRelativeForce(0, (Input.GetAxis(Constants.DPadY) -1) * collectiveMultiplier, 0, ForceMode.Acceleration);
+
         }
-        //Debug.Log(String.Format("DPadY value: {0}", Input.GetAxis(Constants.DPadY)));
+
+        GameObject.Find("Canvas/GameInfo/Altitude/Text/").GetComponent<Text>().text = String.Format("{0} m", currentAltitude.ToString("N2"));
 
         // ---------------------for keyboard---------------------- //
-        //if (Input.GetKey(KeyCode.I))
-        //    Physics.gravity += Vector3.up;
-        //else
-        //{
-        //    if (Input.GetKey(KeyCode.K))
-        //    {
-        //        Physics.gravity += Vector3.down;
-        //    }
-        //    else
-        //    {
-        //        Physics.gravity += -Physics.gravity * Time.deltaTime;
-        //    }
-        //}
+
         // ---------------------for keyboard---------------------- //
 
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Terrain")
+        {
+            GetComponent<HealthBar>().DealDamage((int)collision.relativeVelocity.magnitude, collision);
+        }
+    }
 }
 

@@ -21,18 +21,17 @@ public class HealthBar : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (Input.GetKey(KeyCode.X))
-            DealDamage(_damage);
+
 	}
 
-    void DealDamage(float damageValue)
+    public void DealDamage(float damageValue, Collision collision)
     {
         CurrentHealth -= damageValue;
 
         this.HealthBarCurrentValue.text = CurrentHealth.ToString();
         this.HealthBarSlider.value = CurrentHealth;
         if (CurrentHealth <= 0)
-            Die();
+            Die(collision);
     }
 
     float CalculateHealth()
@@ -40,9 +39,12 @@ public class HealthBar : MonoBehaviour {
         return CurrentHealth / MaxHealth;
     }
 
-    void Die()
+    void Die(Collision collision)
     {
         CurrentHealth = _damage;
+        //Destroy(GetComponent<HelicopterControl>());
+        //Destroy(GetComponent<Animator>());
+        //Physics.gravity = new Vector3(0, -2, 0);
         Debug.Log("Wasted");
     }
 }
