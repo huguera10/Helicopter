@@ -42,7 +42,7 @@ public class HealthBar : MonoBehaviour {
     void Die()
     {
         CurrentHealth = 0;
-        //Destroy(GetComponent<HelicopterControl>());
+        Destroy(GetComponent<HelicopterControl>());
         //Destroy(GetComponent<Animator>());
         //Physics.gravity = new Vector3(0, -2, 0);
         Debug.Log("Wasted");
