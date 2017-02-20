@@ -169,7 +169,7 @@ public class HelicopterControl : MonoBehaviour
         if (collision.gameObject.name == "Terrain" )
         {
             if(GetComponent<HealthBar>().CurrentHealth > 0)
-                GetComponent<HealthBar>().DealDamage((int)collision.relativeVelocity.magnitude);
+                GetComponent<HealthBar>().DealDamage((int)(collision.relativeVelocity.magnitude / 5));
         }
     }
 }

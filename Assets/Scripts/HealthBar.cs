@@ -31,7 +31,9 @@ public class HealthBar : MonoBehaviour {
         this.HealthBarCurrentValue.text = CurrentHealth.ToString();
         this.HealthBarSlider.value = CurrentHealth;
         if (CurrentHealth <= 0)
+        {
             Die();
+        }
     }
 
     float CalculateHealth()
@@ -43,8 +45,9 @@ public class HealthBar : MonoBehaviour {
     {
         CurrentHealth = 0;
         Destroy(GetComponent<HelicopterControl>());
+        Destroy(GetComponent<FollowingCamera>());
         //Destroy(GetComponent<Animator>());
         //Physics.gravity = new Vector3(0, -2, 0);
-        Debug.Log("Wasted");
+        GameObject.Find("EventSystem").GetComponent<SceneController>().isDead = true;
     }
 }
