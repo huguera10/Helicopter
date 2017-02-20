@@ -29,7 +29,7 @@ public class HelicopterControl : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        this.IsTurnedOn = true;
+        this.IsTurnedOn = false;
     }
 
     private void ApplyCollective(Vector2 cyclic, float pedals, float movementX, float movementY)
@@ -46,6 +46,7 @@ public class HelicopterControl : MonoBehaviour
         }
         else
             acelerationMultiplier = 18;
+
         GetComponent<Rigidbody>().AddRelativeForce(cyclicX * acceleration, movement ? acelerationMultiplier * acceleration : gravity, -cyclicZ * acceleration, ForceMode.Acceleration);
 
     }
@@ -53,6 +54,10 @@ public class HelicopterControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (Input.GetButtonUp(Constants.X))
+        {
+            IsTurnedOn = !IsTurnedOn;
+        }
 
         if (this.IsTurnedOn)
         {
@@ -153,7 +158,6 @@ public class HelicopterControl : MonoBehaviour
         else
         {
             GetComponent<Rigidbody>().AddRelativeForce(0, (Input.GetAxis(Constants.DPadY) -1) * collectiveMultiplier, 0, ForceMode.Acceleration);
-
         }
 
         GameObject.Find("Canvas/GameInfo/Altitude/Text/").GetComponent<Text>().text = String.Format("{0} m", currentAltitude.ToString("N2"));

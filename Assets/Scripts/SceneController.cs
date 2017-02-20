@@ -40,6 +40,6 @@ public class SceneController : MonoBehaviour
     {
         isDead = false;
         GameOver.SetActive(isDead);
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("MainScene");
     }
 }

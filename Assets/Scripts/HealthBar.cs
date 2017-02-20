@@ -45,7 +45,7 @@ public class HealthBar : MonoBehaviour {
     {
         CurrentHealth = 0;
         Destroy(GetComponent<HelicopterControl>());
-        Destroy(GetComponent<FollowingCamera>());
+        Destroy(GameObject.Find("MainCamera").GetComponent<FollowingCamera>());
         //Destroy(GetComponent<Animator>());
         //Physics.gravity = new Vector3(0, -2, 0);
         GameObject.Find("EventSystem").GetComponent<SceneController>().isDead = true;
