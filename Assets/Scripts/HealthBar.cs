@@ -27,6 +27,9 @@ public class HealthBar : MonoBehaviour {
     public void DealDamage(float damageValue)
     {
         CurrentHealth -= damageValue;
+        CurrentHealth = CalculateHealth();
+
+        showSmoke();
 
         this.HealthBarCurrentValue.text = CurrentHealth.ToString();
         this.HealthBarSlider.value = CurrentHealth;
@@ -36,16 +39,25 @@ public class HealthBar : MonoBehaviour {
         }
     }
 
-    float CalculateHealth()
+    int CalculateHealth()
     {
-        return CurrentHealth / MaxHealth;
+        float x = (CurrentHealth / MaxHealth);
+        return (int)(x*MaxHealth);
+    }
+
+    void showSmoke()
+    {
+        ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
+        var emission = ps.emission;
+        emission.rateOverTime = (MaxHealth/20 -(CurrentHealth / 20));
     }
 
     void Die()
     {
         CurrentHealth = 0;
-        Destroy(GetComponent<HelicopterControl>());
-        Destroy(GameObject.Find("MainCamera").GetComponent<FollowingCamera>());
+        GetComponent<HelicopterControl>().IsTurnedOn = false;
+        //Destroy(GetComponent<HelicopterControl>());
+        //Destroy(GameObject.Find("MainCamera").GetComponent<FollowingCamera>());
         //Destroy(GetComponent<Animator>());
         //Physics.gravity = new Vector3(0, -2, 0);
         GameObject.Find("EventSystem").GetComponent<SceneController>().isDead = true;

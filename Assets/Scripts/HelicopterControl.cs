@@ -8,7 +8,7 @@ public class HelicopterControl : MonoBehaviour
 {
     private const float gravity = 9.80665f;
 
-    private bool IsTurnedOn;
+    public bool IsTurnedOn;
     private Vector3 cyclicVector;
     private Vector3 pedalsVector;
     private float cyclicX;
@@ -17,12 +17,13 @@ public class HelicopterControl : MonoBehaviour
     private float cyclicMultiplier = 50;
     private float pedalsMultiplier = 50;
     private float collectiveMultiplier = 50;
+    private float maxCollective = 1;
     private float maxAltitude = 530;
     private float acceleration;
     private float maxAcceleration = 2;
-    float acelerationMultiplier2 = 0;
+    private float acelerationMultiplier2 = 0;
 
-
+    float currentAltitude  ;
     public RawImage WindRose;
 
     // Use this for initialization
@@ -52,14 +53,17 @@ public class HelicopterControl : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        if (Input.GetButtonUp(Constants.X))
+        if (Input.GetButton(Constants.X))
         {
             IsTurnedOn = !IsTurnedOn;
         }
+    }
 
+    // Update is called once per frame
+    void FixedUpdate()
+    {
         if (this.IsTurnedOn)
         {
             if (GetComponent<Animator>().speed < 1)
@@ -94,11 +98,19 @@ public class HelicopterControl : MonoBehaviour
 
         getVelocity();
 
+        getAltitude();
+
     }
 
     public void getVelocity()
     {
+        currentAltitude = transform.position.y;
         GameObject.Find("Canvas/Speedometer/Number").GetComponent<Text>().text = ((int)(GetComponent<Rigidbody>().velocity.magnitude*5)).ToString();
+    }
+
+    public void getAltitude()
+    {
+        GameObject.Find("Canvas/GameInfo/Altitude/Text/").GetComponent<Text>().text = String.Format("{0} m", currentAltitude.ToString("N2"));
     }
 
     public Vector2 moveCyclic()
@@ -167,18 +179,24 @@ public class HelicopterControl : MonoBehaviour
     {
         /* DEFINIR LIMITE DE ROTAÇÃO MÁXIMA E MÍNIMA DAS HÉLICES PARA QUE O HELICÓPTERO FIQUE NO AR */
     
-        float currentAltitude = transform.position.y;
+        float collective = Input.GetAxis(Constants.DPadY);
 
         if (currentAltitude <= maxAltitude)
         {
-            GetComponent<Rigidbody>().AddRelativeForce(0, Input.GetAxis(Constants.DPadY) * collectiveMultiplier, 0, ForceMode.Acceleration);
+            if (collective != 0) {
+                maxCollective = Mathf.Lerp(maxCollective, 1, Time.fixedDeltaTime);
+            } else
+            {
+                maxCollective = Mathf.Lerp(maxCollective, 0, Time.fixedDeltaTime);
+            }
+            GetComponent<Rigidbody>().AddRelativeForce(0, collective * collectiveMultiplier * maxCollective, 0, ForceMode.Acceleration);
+
         }
         else
         {
             GetComponent<Rigidbody>().AddRelativeForce(0, (Input.GetAxis(Constants.DPadY) -1) * collectiveMultiplier, 0, ForceMode.Acceleration);
         }
 
-        GameObject.Find("Canvas/GameInfo/Altitude/Text/").GetComponent<Text>().text = String.Format("{0} m", currentAltitude.ToString("N2"));
 
         // ---------------------for keyboard---------------------- //
 
