@@ -55,7 +55,7 @@ public class HelicopterControl : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButton(Constants.X))
+        if (Input.GetButtonDown(Constants.X))
         {
             IsTurnedOn = !IsTurnedOn;
         }
@@ -91,7 +91,7 @@ public class HelicopterControl : MonoBehaviour
                 GetComponent<Animator>().speed -= 0.005f;
                 GetComponent<AudioSource>().pitch -= 0.005f;
             }
-            if (acelerationMultiplier2 < 100)
+            if (acelerationMultiplier2 < 150)
             acelerationMultiplier2 = acelerationMultiplier2 + 1.001f;
             GetComponent<Rigidbody>().AddForce(0,-1 * acelerationMultiplier2,0, ForceMode.Acceleration);
         }
@@ -110,7 +110,7 @@ public class HelicopterControl : MonoBehaviour
 
     public void getAltitude()
     {
-        GameObject.Find("Canvas/GameInfo/Altitude/Text/").GetComponent<Text>().text = String.Format("{0} m", currentAltitude.ToString("N2"));
+        GameObject.Find("Canvas/GameInfo/Altitude/").GetComponent<Text>().text = String.Format("{0} m", currentAltitude.ToString("N2"));
     }
 
     public Vector2 moveCyclic()
