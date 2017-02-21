@@ -11,7 +11,6 @@ public class HelicopterControl : MonoBehaviour
     private bool IsTurnedOn;
     private Vector3 cyclicVector;
     private Vector3 pedalsVector;
-    private Vector3 collectiveVector;
     private float cyclicX;
     private float cyclicZ;
     private float pedalsY;
@@ -21,7 +20,7 @@ public class HelicopterControl : MonoBehaviour
     private float maxAltitude = 530;
     private float acceleration;
     private float maxAcceleration = 2;
-    private bool aux = true;
+    float acelerationMultiplier2 = 0;
 
 
     public RawImage WindRose;
@@ -29,6 +28,8 @@ public class HelicopterControl : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        GetComponent<Animator>().speed = 0;
+        GetComponent<AudioSource>().pitch = 0;
         this.IsTurnedOn = false;
     }
 
@@ -61,6 +62,12 @@ public class HelicopterControl : MonoBehaviour
 
         if (this.IsTurnedOn)
         {
+            if (GetComponent<Animator>().speed < 1)
+            {
+                GetComponent<Animator>().speed += 0.008f;
+                GetComponent<AudioSource>().pitch += 0.008f;
+            }
+            acelerationMultiplier2 = 0;
             moveCollective();
 
             Vector2 cyclic = moveCyclic();
@@ -72,6 +79,17 @@ public class HelicopterControl : MonoBehaviour
              ApplyCollective(cyclic, pedals, movementX, movementY);
             //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-cyclic.y, pedals, -cyclic.x), Time.fixedDeltaTime * 5000);
+        }
+        else
+        {
+            if (GetComponent<Animator>().speed > 0)
+            {
+                GetComponent<Animator>().speed -= 0.005f;
+                GetComponent<AudioSource>().pitch -= 0.005f;
+            }
+            if (acelerationMultiplier2 < 100)
+            acelerationMultiplier2 = acelerationMultiplier2 + 1.001f;
+            GetComponent<Rigidbody>().AddForce(0,-1 * acelerationMultiplier2,0, ForceMode.Acceleration);
         }
 
         getVelocity();
