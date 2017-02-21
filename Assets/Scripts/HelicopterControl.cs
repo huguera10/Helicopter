@@ -8,27 +8,29 @@ public class HelicopterControl : MonoBehaviour
 {
     private const float gravity = 9.80665f;
 
-    private bool IsTurnedOn;
+    public bool IsTurnedOn;
     private Vector3 cyclicVector;
     private Vector3 pedalsVector;
-    private Vector3 collectiveVector;
     private float cyclicX;
     private float cyclicZ;
     private float pedalsY;
     private float cyclicMultiplier = 50;
     private float pedalsMultiplier = 50;
     private float collectiveMultiplier = 50;
+    private float maxCollective = 1;
     private float maxAltitude = 530;
     private float acceleration;
     private float maxAcceleration = 2;
-    private bool aux = true;
+    private float acelerationMultiplier2 = 0;
 
-
+    float currentAltitude  ;
     public RawImage WindRose;
 
     // Use this for initialization
     void Start()
     {
+        GetComponent<Animator>().speed = 0;
+        GetComponent<AudioSource>().pitch = 0;
         this.IsTurnedOn = false;
     }
 
@@ -51,16 +53,25 @@ public class HelicopterControl : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        if (Input.GetButtonUp(Constants.X))
+        if (Input.GetButtonDown(Constants.X))
         {
             IsTurnedOn = !IsTurnedOn;
         }
+    }
 
+    // Update is called once per frame
+    void FixedUpdate()
+    {
         if (this.IsTurnedOn)
         {
+            if (GetComponent<Animator>().speed < 1)
+            {
+                GetComponent<Animator>().speed += 0.008f;
+                GetComponent<AudioSource>().pitch += 0.008f;
+            }
+            acelerationMultiplier2 = 0;
             moveCollective();
 
             Vector2 cyclic = moveCyclic();
@@ -73,14 +84,33 @@ public class HelicopterControl : MonoBehaviour
             //Debug.Log(cyclic.x * cyclicMultiplier + "\t" + pedals * pedalsMultiplier + "\t" + cyclic.y * cyclicMultiplier);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-cyclic.y, pedals, -cyclic.x), Time.fixedDeltaTime * 5000);
         }
+        else
+        {
+            if (GetComponent<Animator>().speed > 0)
+            {
+                GetComponent<Animator>().speed -= 0.005f;
+                GetComponent<AudioSource>().pitch -= 0.005f;
+            }
+            if (acelerationMultiplier2 < 150)
+            acelerationMultiplier2 = acelerationMultiplier2 + 1.001f;
+            GetComponent<Rigidbody>().AddForce(0,-1 * acelerationMultiplier2,0, ForceMode.Acceleration);
+        }
 
         getVelocity();
+
+        getAltitude();
 
     }
 
     public void getVelocity()
     {
+        currentAltitude = transform.position.y;
         GameObject.Find("Canvas/Speedometer/Number").GetComponent<Text>().text = ((int)(GetComponent<Rigidbody>().velocity.magnitude*5)).ToString();
+    }
+
+    public void getAltitude()
+    {
+        GameObject.Find("Canvas/GameInfo/Altitude/").GetComponent<Text>().text = String.Format("{0} m", currentAltitude.ToString("N2"));
     }
 
     public Vector2 moveCyclic()
@@ -149,18 +179,24 @@ public class HelicopterControl : MonoBehaviour
     {
         /* DEFINIR LIMITE DE ROTAÇÃO MÁXIMA E MÍNIMA DAS HÉLICES PARA QUE O HELICÓPTERO FIQUE NO AR */
     
-        float currentAltitude = transform.position.y;
+        float collective = Input.GetAxis(Constants.DPadY);
 
         if (currentAltitude <= maxAltitude)
         {
-            GetComponent<Rigidbody>().AddRelativeForce(0, Input.GetAxis(Constants.DPadY) * collectiveMultiplier, 0, ForceMode.Acceleration);
+            if (collective != 0) {
+                maxCollective = Mathf.Lerp(maxCollective, 1, Time.fixedDeltaTime);
+            } else
+            {
+                maxCollective = Mathf.Lerp(maxCollective, 0, Time.fixedDeltaTime);
+            }
+            GetComponent<Rigidbody>().AddRelativeForce(0, collective * collectiveMultiplier * maxCollective, 0, ForceMode.Acceleration);
+
         }
         else
         {
             GetComponent<Rigidbody>().AddRelativeForce(0, (Input.GetAxis(Constants.DPadY) -1) * collectiveMultiplier, 0, ForceMode.Acceleration);
         }
 
-        GameObject.Find("Canvas/GameInfo/Altitude/Text/").GetComponent<Text>().text = String.Format("{0} m", currentAltitude.ToString("N2"));
 
         // ---------------------for keyboard---------------------- //
 
